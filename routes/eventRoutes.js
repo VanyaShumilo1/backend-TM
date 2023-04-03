@@ -74,7 +74,12 @@ router.get('/:id', async (req, res) => {
 
         const userid = req.params.id
 
-        const events = await EventModel.find({user: userid})
+        let events = await EventModel.find({user: userid}).sort({startDate: 1})
+        events = events.filter(event => {
+            let eventDate = new Date(event.startDate)
+            let currentDate = new Date()
+            return eventDate > currentDate
+        })
 
         if(!events) {
             return res.status(404).json({
